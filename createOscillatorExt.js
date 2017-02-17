@@ -135,20 +135,7 @@ var createOscillatorExt2 = function (ac) {
 
     this.osc.Pulse = function () {
         if (document.getElementById('Envelope').checked) {
-
-            // Envelopes         
-            //     __max
-            //   /\______  __volume
-            //  /        \
-            //  a d  s   r
-            //  t e  u   e
-            //  t c  b   l
-            //  a a  t   e
-            //  c y  a   a
-            //  k    i   s
-            //       n   e
-            //
-            var ooo = document.getElementById('attack');
+            
             var attack = parseFloat(document.getElementById('attack').value);
             var decay = parseFloat(document.getElementById('decay').value);
             var subtain = parseFloat(document.getElementById('subtain').value);

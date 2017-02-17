@@ -1,9 +1,12 @@
 
-function bytesToSize(bytes) {
+function bytesToSize(bytes,digit) {
+    if (digit === undefined) {
+        digit = 2;
+    }
    var sizes = ['p','n','u','m','', 'K', 'M', 'G', 'T'];
    if (bytes == 0) return '0';
-   var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-    return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i+4];
+   var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1000)));
+    return (bytes / Math.pow(1000, i)).toFixed(digit) + ' ' + sizes[i+4];
 };
 
 function frequencyinput(obj,cfg)
@@ -146,14 +149,55 @@ function timeinput(obj,cfg)
     this.slider.min = this.min;
     this.slider.max = this.max;
     this.slider.step = 0.0001;
-    obj.appendChild(this.slider);
+
+    if (!cfg.hideslider) {
+        obj.appendChild(this.slider);
+    }
+
+    this.selector = document.createElement('select');
+    selectortime = [
+        0.000001,
+        0.000002,
+        0.000005,
+        0.00001,
+        0.00002,
+        0.00005,
+        0.0001,
+        0.0002,
+        0.0005,
+        0.001,
+        0.002,
+        0.005,
+        0.01,
+        0.02,
+        0.05,
+        0.1,
+        0.2,
+        0.5,
+        1,
+        2,
+        5
+    ]
+    for (var i =0; i < selectortime.length ; i ++) {
+        if (selectortime[i] >= this.min && selectortime[i] <= this.max) {
+            var opt = document.createElement('option');
+            opt.value = selectortime[i];
+            opt.innerHTML = bytesToSize(selectortime[i],0)+'s';
+            this.selector.appendChild(opt);
+        }
+    }
+    obj.appendChild(this.selector);
 
     this.textvalue = document.createElement('span');
     obj.appendChild(this.textvalue);
 
     this.toString = function()
     {
-        return bytesToSize(this.time) + 's ' + bytesToSize(1/this.time) + 'hz';
+        if (cfg.hideslider) {
+            return bytesToSize(1/this.time) + 'hz';
+        } else {
+            return bytesToSize(this.time) + 's ' + bytesToSize(1/this.time) + 'hz';
+        }
     }
 
     this.set = function(v)
@@ -161,6 +205,7 @@ function timeinput(obj,cfg)
         this.time = v;
         this.textvalue.innerHTML = this.toString();
         this.slider.value = v;
+        this.selector.value = this.time;
         this.obj.value = this.time;
         if (this.obj.onchange ) {
             this.obj.onchange(this.obj );
@@ -168,10 +213,24 @@ function timeinput(obj,cfg)
         
     }
 
+    this.selector.onchange =  function () 
+    {
+        this.time = parseFloat(this.selector.value);
+        this.textvalue.innerHTML = this.toString();
+        this.slider.value =  this.time;
+        this.obj.value = this.time;
+        if (this.obj.onchange ) {
+            this.obj.onchange(this.obj );
+        }
+        
+    }.bind(this);
+
+
     this.slider.onchange = this.slider.oninput = function()
     {
         this.time = this.slider.value;
         this.textvalue.innerHTML = this.toString();
+        this.selector.value = this.time;
         this.obj.value = this.time;
         if (this.obj.onchange ) {
             this.obj.onchange(this.obj );

@@ -283,9 +283,6 @@ var scope2 = new Scope(document.getElementById('scope2'), {
     master: scope1
 });
 
-document.getElementById('scopediv').value = scope1.timediv;
-document.getElementById('scope2div').value = scope2.timediv;
-
 var freq = new Freq(document.getElementById('freq'), {});
 
 var osc = createOscillatorExt2(context);
