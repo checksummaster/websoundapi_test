@@ -111,6 +111,21 @@
             <td>max</td>
             <td><span data-save="envelope.max" id="maxenvelop" class="sliderinput" data-config="{min:0, max:1, value:1}"></span></td>
         </tr>
+        <tr class="blank_row">
+            <td colspan="2">filter</td>
+             <tr>
+                <td>type</td>
+                <td><span data-save="filter.type" class="filterinput" onchange="osc.filter.type = this.value"></span></td>
+            </tr>
+            <tr>
+                <td>Freq</td>
+                <td><span data-save="filter.freq" class="frequencyinput" onchange="osc.filter.frequency.value = this.value" data-config="{min:0.1, value:200}"></span></td>
+          </tr>
+              <tr>
+            <td>q</td>
+            <td><span data-save="filter.q"  class="sliderinput" data-config="{min:0, max:20, value:1}" onchange="osc.filter.q = this.value"></span></td>
+ 
+        </tr>
     </table>
     </td><td valign="top">
     <table>

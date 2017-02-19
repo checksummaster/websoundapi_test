@@ -62,16 +62,19 @@ var createOscillatorExt = function (ac) {
     this.node.out2.gain = 1;
     this.node.connect(this.node.out2);
 
-    this.node.out = ac.createGain();
-    this.node.out.gain = 1;
-    this.node.out2.connect(this.node.out);
+    this.node.filter = ac.createBiquadFilter();
+    this.node.filter.type = 'allpass';
+    this.node.out2.connect(this.node.filter);
+
+    this.node.filter.frequency = 1000;
+
 
 
     this.node.connect = function () {
-        this.out.connect.apply(this.out, arguments);
+        this.filter.connect.apply(this.filter, arguments);
     }.bind(this.node);
     this.node.disconnect = function () {
-        this.out.disconnect.apply(this.out, arguments);
+        this.filter.disconnect.apply(this.filter, arguments);
     }.bind(this.node);
 
     return this.node;
@@ -135,7 +138,7 @@ var createOscillatorExt2 = function (ac) {
 
     this.osc.Pulse = function () {
         if (document.getElementById('Envelope').checked) {
-            
+
             var attack = parseFloat(document.getElementById('attack').value);
             var decay = parseFloat(document.getElementById('decay').value);
             var subtain = parseFloat(document.getElementById('subtain').value);

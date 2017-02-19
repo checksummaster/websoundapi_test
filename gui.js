@@ -348,6 +348,46 @@ function shapeinput(obj,cfg)
 
 }
 
+function filterinput(obj,cfg)
+{
+    this.obj = obj;
+    this.type = document.createElement('select');
+    var types = ['allpass','lowpass', 'highpass', 'bandpass','lowshelf', 'highshelf', 'peaking', 'notch' ];
+    for (var i = 0; i < types.length ; i ++) {
+        var opt = document.createElement('option');
+        opt.value = types[i];
+        opt.innerHTML = types[i];
+        this.type.appendChild(opt);
+    }
+    obj.appendChild(this.type);
+
+    this.set = function(v)
+    {
+        this.type.value = v;
+        this.obj.value = this.type.value;
+        if (this.obj.onchange ) {
+            this.obj.onchange(this.obj );
+        }
+    }.bind(this);
+
+    this.type.onchange = function () 
+    {
+        this.obj.value = this.type.value;
+        if (this.obj.onchange ) {
+            this.obj.onchange(this.obj );
+        }
+
+    }.bind(this);
+
+    this.obj.value = types[0];
+
+    obj.load = function(v)
+    {
+        this.set(v);
+    }.bind(this);
+
+}
+
 function loadgui() {
     var FreqInput = document.getElementsByClassName('frequencyinput');
     for (var i = 0 ; i < FreqInput.length ; i++ ) {
@@ -356,7 +396,7 @@ function loadgui() {
         if (data) {
             eval("cfg = " + data);
         }
-        FreqInput.control = new frequencyinput(FreqInput[i],cfg);
+        FreqInput[i].control = new frequencyinput(FreqInput[i],cfg);
     }
 
     var TimeInput = document.getElementsByClassName('timeinput');
@@ -366,7 +406,7 @@ function loadgui() {
         if (data) {
             eval("cfg = " + data);
         }
-        TimeInput.control = new timeinput(TimeInput[i],cfg);
+        TimeInput[i].control = new timeinput(TimeInput[i],cfg);
     }
 
     var SliderInput = document.getElementsByClassName('sliderinput');
@@ -376,7 +416,7 @@ function loadgui() {
         if (data) {
             eval("cfg = " + data);
         }
-        SliderInput.control = new sliderinput(SliderInput[i],cfg);
+        SliderInput[i].control = new sliderinput(SliderInput[i],cfg);
     }
 
     var ShapeInput = document.getElementsByClassName('shapeinput');
@@ -386,7 +426,17 @@ function loadgui() {
         if (data) {
             eval("cfg = " + data);
         }
-        ShapeInput.control = new shapeinput(ShapeInput[i],cfg);
+        ShapeInput[i].control = new shapeinput(ShapeInput[i],cfg);
+    }
+
+    var FilterInput = document.getElementsByClassName('filterinput');
+    for (var i = 0 ; i < FilterInput.length ; i++ ) {
+        var cfg = {};
+        var data = FilterInput[i].getAttribute('data-config');
+        if (data) {
+            eval("cfg = " + data);
+        }
+        FilterInput[i].control = new filterinput(FilterInput[i],cfg);
     }
 
 }
