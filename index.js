@@ -398,11 +398,13 @@ function load(saveobj)
                 }
                 targetobj = targetobj[c[j]];
             }
-            if ( allElements[i].nodeName === 'INPUT' && allElements[i].type==="checkbox" ) {
-                allElements[i].checked = targetobj[c[c.length-1]];
-            } else {
-                allElements[i].load(targetobj[c[c.length-1]]);
-            }  
+            if ( targetobj[c[c.length-1]] !== undefined) {
+                if ( allElements[i].nodeName === 'INPUT' && allElements[i].type==="checkbox" ) {
+                    allElements[i].checked = targetobj[c[c.length-1]];
+                } else {
+                    allElements[i].load(targetobj[c[c.length-1]]);
+                }  
+            }
         }
     }
 }

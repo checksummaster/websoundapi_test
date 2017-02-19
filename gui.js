@@ -312,7 +312,7 @@ function shapeinput(obj,cfg)
 {
     this.obj = obj;
     this.shape = document.createElement('select');
-    var shapes = cfg.shapes || ['sine','square', 'sawtooth', 'triangle','sawtooth rev', 'pwm' ];
+    var shapes = cfg.shapes || ['sine','square', 'sawtooth', 'triangle','sawtooth rev', 'pwm','noise', 'pink', 'brown'];
     for (var i = 0; i < shapes.length ; i ++) {
         var opt = document.createElement('option');
         opt.value = shapes[i];

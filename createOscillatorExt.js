@@ -29,14 +29,30 @@ var createOscillatorExt = function (ac) {
         set: function (v) {
             this.out1.disconnect();
             this.out2.disconnect();
-            if (v === 'pwm') {
-                this.out1.connect(this.out);
+            this.out3.disconnect();
+            if (v === 'noise') {
+                this.out1.connect(this.out3);
+                this.out3.connect(this.filter);
+                this.out3.onaudioprocess = this.noiseprocess;
+            } 
+            else if (v === 'pink') {
+                this.out1.connect(this.out3);
+                this.out3.connect(this.filter);
+                this.out3.onaudioprocess = this.pink;
+            }
+            else if (v === 'brown') {
+                this.out1.connect(this.out3);
+                this.out3.connect(this.filter);
+                this.out3.onaudioprocess = this.brown;
+            } 
+            else if (v === 'pwm') {
+                this.out1.connect(this.filter);
                 this.type = "sawtooth";
             } else if (v === 'sawtooth rev') {
-                this.out2.connect(this.out);
+                this.out2.connect(this.filter);
                 this.setPeriodicWave(this.wave);
             } else {
-                this.out2.connect(this.out);
+                this.out2.connect(this.filter);
                 this.type = v;
             }
         }.bind(this.node)
@@ -57,9 +73,58 @@ var createOscillatorExt = function (ac) {
     this.node.connect(constantOneShaper);
     this.constantOneShaper.connect(widthGain);
 
+    this.noise = context.createScriptProcessor(4096, 1, 1);
+
+    this.node.noiseprocess = function (audioProcessingEvent) {
+        var inputBuffer = audioProcessingEvent.inputBuffer;
+        var outputBuffer = audioProcessingEvent.outputBuffer;
+
+        for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+            var inputData = inputBuffer.getChannelData(channel);
+            var outputData = outputBuffer.getChannelData(channel);
+
+            for (var sample = 0; sample < inputBuffer.length; sample++) {
+                outputData[sample] = Math.random() * 2 - 1;
+            }
+        }
+
+    };
+
+    this.node.pink =  function(e) {
+         var b0, b1, b2, b3, b4, b5, b6;
+        b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+        var output = e.outputBuffer.getChannelData(0);
+        for (var i = 0; i < output.length; i++) {
+            var white = Math.random() * 2 - 1;
+            b0 = 0.99886 * b0 + white * 0.0555179;
+            b1 = 0.99332 * b1 + white * 0.0750759;
+            b2 = 0.96900 * b2 + white * 0.1538520;
+            b3 = 0.86650 * b3 + white * 0.3104856;
+            b4 = 0.55000 * b4 + white * 0.5329522;
+            b5 = -0.7616 * b5 - white * 0.0168980;
+            output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+            output[i] *= 0.11; // (roughly) compensate for gain
+            b6 = white * 0.115926;
+        }
+    };
+
+    this.node.brown =  function(e) {
+        var lastOut = 0.0;
+        var output = e.outputBuffer.getChannelData(0);
+        for (var i = 0; i < output.length; i++) {
+            var white = Math.random() * 2 - 1;
+            output[i] = (lastOut + (0.02 * white)) / 1.02;
+            lastOut = output[i];
+            output[i] *= 3.5; // (roughly) compensate for gain
+        }
+    }
+
+
+
     this.node.out1 = this.pulseShaper;
     this.node.out2 = ac.createGain();
     this.node.out2.gain = 1;
+    this.node.out3 = noise;
     this.node.connect(this.node.out2);
 
     this.node.filter = ac.createBiquadFilter();
@@ -67,6 +132,8 @@ var createOscillatorExt = function (ac) {
     this.node.out2.connect(this.node.filter);
 
     this.node.filter.frequency = 1000;
+
+    
 
 
 
