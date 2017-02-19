@@ -14,17 +14,114 @@
         background-color: #FFFFFF;
         color: black;
     }
+    textarea {
+        background-color: black;
+        color: white;
+    }
 </style>
 
 <body>
+    <table><tr><td valign="top">
+    <table>
+        <tr class="blank_row">
+            <td colspan="2">Main</td>
+        </tr>
+        <tr>
+            <td>pwm</td>
+            <td><span data-save="main.pwm" class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="setcycle(osc,this.value)"></span></td>
+        </tr>
+        <tr>
+            <td>Freq</td>
+            <td><span data-save="main.freq" class="frequencyinput" onchange="setfreq(osc,this.value)" data-config="{min:0.1}"></span></td>
+        </tr>
+        <tr>
+            <td>shape</td>
+            <td> <span data-save="main.shape" class="shapeinput" onchange="setshape(osc,this.value)"></span></td>
+        </tr>
+        <tr class="blank_row">
+            <td colspan="2">vibrato</td>
+        </tr>
+        <tr>
+            <td>pwm</td>
+            <td><span data-save="vibrato.pwm" class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="setcycle(osc.vibrato,this.value)"></span></td>
+        </tr>
+        <tr>
+            <td>amplitude</td>
+            <td><span data-save="vibrato.gain" class="sliderinput" data-config="{min:0, max:5000, value:0}" onchange="setvibrato(this.value)"></span></td>
+        </tr>
+        <tr>
+            <td>Freq</td>
+            <td><span data-save="vibrato.freq" class="frequencyinput" onchange="setfreq(osc.vibrato,this.value)" data-config="{min:0.1, max:100, value: 4}"></span></td>
+        </tr>
+        <tr>
+            <td>shape</td>
+            <td><span data-save="vibrato.shape" class="shapeinput" onchange="setshape(osc.vibrato,this.value)"></span></td>
+        </tr>
+        <tr class="blank_row">
+            <td colspan="2">tremolo</td>
+        </tr>
+        <tr>
+            <td>pwm</td>
+            <td><span data-save="tremolo.pwm" class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="setcycle(osc.tremolo,this.value)"></span></td>
+        </tr>
+        <tr>
+            <td>amplitude</td>
+            <td><span data-save="tremolo.gain" class="sliderinput" data-config="{min:0, max:1, value:0}" onchange="settremolo(this.value)"></span></td>
+        </tr>
+        <tr>
+            <td>Freq</td>
+            <td><span data-save="tremolo.freq" class="frequencyinput" onchange="setfreq(osc.tremolo,this.value)" data-config="{min:0.1, max:20, value: 4}"></span></td>
+        </tr>
+        <tr>
+            <td>shape</td>
+            <td><span data-save="tremolo.shape" class="shapeinput" onchange="setshape(osc.tremolo,this.value)"></span></td>
+        </tr>
+        <tr class="blank_row">
+            <td colspan="2">Envelope</td>
+        </tr>
+        <tr>
+            <td>enable</td>
+            <td><input data-save="envelope.enable" type="checkbox" id="Envelope" onchange="enableEnvelop(this.checked)"></td>
+        </tr>
+        <tr>
+            <td>Freq</td>
+            <td><span data-save="envelope.freq" class="frequencyinput" onchange="setenvelopfreq(this.value)" data-config="{min:0.1, max:10, value:0.5}"></span></td>
+        </tr>
+        <tr>
+            <td>attack</td>
+            <td><span data-save="envelope.attack" id="attack" class="timeinput" data-config="{min:0, max:1, value:0.1}"></span></td>
+        </tr>
+        <tr>
+            <td>decay</td>
+            <td><span data-save="envelope.decay" id="decay" class="timeinput" data-config="{min:0, max:1, value:0.1}"></span></td>
+        </tr>
+        <tr>
+            <td>subtain</td>
+            <td><span data-save="envelope.subtain" id="subtain" class="timeinput" data-config="{min:0, max:1, value:0.2}"></span></td>
+        </tr>
+        <tr>
+            <td>release</td>
+            <td><span data-save="envelope.release" id="release" class="timeinput" data-config="{min:0, max:1, value:0.1}"></span></td>
+        </tr>
+        <tr>
+            <td>volume</td>
+            <td><span data-save="envelope.volume" id="volumeenvelop" class="sliderinput" data-config="{min:0, max:1, value:0.3}"></span></td>
+        </tr>
+        <tr>
+            <td>max</td>
+            <td><span data-save="envelope.max" id="maxenvelop" class="sliderinput" data-config="{min:0, max:1, value:1}"></span></td>
+        </tr>
+    </table>
+    </td><td valign="top">
     <table>
         <tr>
             <td>
                 <canvas id="scope"></canvas>
             </td>
             <td>
-                s/div :<span class="timeinput" data-config="{min:0.000001, max:5, value:1, hideslider:true}" onchange="scope1.timediv = this.value;"></span><br>                
-                neg slope: <input type="checkbox" onchange="scope1.setNeg(this.checked);"><br> trigger : <span class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="scope1.setEdgeThreshold(this.value);"></span>
+                s/div :<span data-save="scope1.freq" class="timeinput" data-config="{min:0.000001, max:5, value:1, hideslider:true}" onchange="scope1.timediv = this.value;"></span><br>                
+                neg slope: <input data-save="scope1.neg" type="checkbox" onchange="scope1.setNeg(this.checked);"><br> 
+                trigger : <span data-save="scope1.trigger" class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="scope1.setEdgeThreshold(this.value);"></span>
             </td>
         </tr>
     </table>
@@ -34,8 +131,9 @@
                 <canvas id="scope2"></canvas>
             </td>
             <td>
-                s/div :<span class="timeinput" data-config="{min:0.000001, max:5, value:0.001, hideslider:true}" onchange="scope2.timediv = this.value;"></span><br>                
-                neg slope: <input type="checkbox" onchange="scope2.setNeg(this.checked);"><br> trigger : <span class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="scope2.setEdgeThreshold(this.value);"></span>
+                s/div :<span data-save="scope2.freq" class="timeinput" data-config="{min:0.000001, max:5, value:0.001, hideslider:true}" onchange="scope2.timediv = this.value;"></span><br>                
+                neg slope: <input data-save="scope2.neg" type="checkbox" onchange="scope2.setNeg(this.checked);"><br> 
+                trigger : <span data-save="scope2.trigger" class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="scope2.setEdgeThreshold(this.value);"></span>
             </td>
         </tr>
         <tr>
@@ -47,96 +145,12 @@
             </td>
         </tr>
     </table>
-    <table>
-        <tr class="blank_row">
-            <td colspan="2">Main</td>
-        </tr>
-        <tr>
-            <td>pwm</td>
-            <td><span class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="setcycle(osc,this.value)"></span></td>
-        </tr>
-        <tr>
-            <td>Freq</td>
-            <td><span class="frequencyinput" onchange="setfreq(osc,this.value)" data-config="{min:0.1}"></span></td>
-        </tr>
-        <tr>
-            <td>shape</td>
-            <td> <span class="shapeinput" onchange="setshape(osc,this.value)"></span></td>
-        </tr>
-        <tr class="blank_row">
-            <td colspan="2">vibrato</td>
-        </tr>
-        <tr>
-            <td>pwm</td>
-            <td><span class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="setcycle(osc.vibrato,this.value)"></span></td>
-        </tr>
-        <tr>
-            <td>amplitude</td>
-            <td><span class="sliderinput" data-config="{min:0, max:5000, value:0}" onchange="setvibrato(this.value)"></span></td>
-        </tr>
-        <tr>
-            <td>Freq</td>
-            <td><span class="frequencyinput" onchange="setfreq(osc.vibrato,this.value)" data-config="{min:0.1, max:100, value: 4}"></span></td>
-        </tr>
-        <tr>
-            <td>shape</td>
-            <td><span class="shapeinput" onchange="setshape(osc.vibrato,this.value)"></span></td>
-        </tr>
-        <tr class="blank_row">
-            <td colspan="2">tremolo</td>
-        </tr>
-        <tr>
-            <td>pwm</td>
-            <td><span class="sliderinput" data-config="{min:-1, max:1, value:0}" onchange="setcycle(osc.tremolo,this.value)"></span></td>
-        </tr>
-        <tr>
-            <td>amplitude</td>
-            <td><span class="sliderinput" data-config="{min:0, max:1, value:0}" onchange="settremolo(this.value)"></span></td>
-        </tr>
-        <tr>
-            <td>Freq</td>
-            <td><span class="frequencyinput" onchange="setfreq(osc.tremolo,this.value)" data-config="{min:0.1, max:20, value: 4}"></span></td>
-        </tr>
-        <tr>
-            <td>shape</td>
-            <td><span class="shapeinput" onchange="setshape(osc.tremolo,this.value)"></span></td>
-        </tr>
-        <tr class="blank_row">
-            <td colspan="2">Envelope</td>
-        </tr>
-        <tr>
-            <td>enable</td>
-            <td><input type="checkbox" id="Envelope" onchange="enableEnvelop(this.checked)"></td>
-        </tr>
-        <tr>
-            <td>Freq</td>
-            <td><span class="frequencyinput" onchange="setenvelopfreq(this.value)" data-config="{min:0.1, max:10, value:0.5}"></span></td>
-        </tr>
-        <tr>
-            <td>attack</td>
-            <td><span id="attack" class="timeinput" data-config="{min:0, max:1, value:0.1}"></span></td>
-        </tr>
-        <tr>
-            <td>decay</td>
-            <td><span id="decay" class="timeinput" data-config="{min:0, max:1, value:0.1}"></span></td>
-        </tr>
-        <tr>
-            <td>subtain</td>
-            <td><span id="subtain" class="timeinput" data-config="{min:0, max:1, value:0.2}"></span></td>
-        </tr>
-        <tr>
-            <td>release</td>
-            <td><span id="release" class="timeinput" data-config="{min:0, max:1, value:0.1}"></span></td>
-        </tr>
-        <tr>
-            <td>volume</td>
-            <td><span id="volumeenvelop" class="sliderinput" data-config="{min:0, max:1, value:0.3}"></span></td>
-        </tr>
-        <tr>
-            <td>max</td>
-            <td><span id="maxenvelop" class="sliderinput" data-config="{min:0, max:1, value:1}"></span></td>
-        </tr>
-    </table>
+    </td><td valign="top">
+    <textarea id="savetext" cols="40" rows="60"></textarea><br>
+    <button onclick="reset();">set default</button><button onclick="savedata();">get</button><button onclick="loaddata();">set</button><br>
+    copy text in text editor to save ;)
+    </td></tr></table>
+    
     <script src="notesfreq.js"></script>
     <script src="createOscillatorExt.js"></script>
     <script src="gui.js"></script>

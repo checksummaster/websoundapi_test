@@ -276,14 +276,21 @@ var Freq = function (canvas, cfg) {
 }
 
 var scope1 = new Scope(document.getElementById('scope'), {
-    timediv: 0.5
+    timediv: 0.5,
+    width: 512,
+    height: 256
 });
 var scope2 = new Scope(document.getElementById('scope2'), {
     timediv: 0.01,
-    master: scope1
+    master: scope1,
+    width: 512,
+    height: 256
 });
 
-var freq = new Freq(document.getElementById('freq'), {});
+var freq = new Freq(document.getElementById('freq'), {
+    width: 512,
+    height: 256
+});
 
 var osc = createOscillatorExt2(context);
 
@@ -347,5 +354,79 @@ function setenvelopfreq(v) {
     }, EnvelopeFreqVal);
 }
 
+function save()
+{
+    var allElements = document.getElementsByTagName('*');
+    var saveobj = {};
+    for (var i = 0, n = allElements.length; i < n; i++)
+    {
+        var data = allElements[i].getAttribute('data-save');
+        if ( data !== null)
+        {
+            var c = data.split('.');
+            var targetobj = saveobj;
+            for (var j = 0 ; j < c.length - 1; j++) {
+                if (targetobj[c[j]]=== undefined) {
+                    targetobj[c[j]] = {};
+                }
+                targetobj = targetobj[c[j]];
+            }
+            if ( allElements[i].nodeName === 'INPUT' && allElements[i].type==="checkbox" ) {
+                targetobj[c[c.length-1]] = allElements[i].checked;
+            } else {
+                targetobj[c[c.length-1]] = allElements[i].value;
+            }
+        }
+    }
+    return saveobj;
+}
+
+function load(saveobj)
+{
+    var allElements = document.getElementsByTagName('*');
+
+    for (var i = 0, n = allElements.length; i < n; i++)
+    {
+        var data = allElements[i].getAttribute('data-save');
+        if ( data !== null)
+        { 
+            var c = data.split('.');
+            var targetobj = saveobj;
+            for (var j = 0 ; j < c.length - 1; j++) {
+                if (targetobj[c[j]]=== undefined) {
+                   break; // abord this one
+                }
+                targetobj = targetobj[c[j]];
+            }
+            if ( allElements[i].nodeName === 'INPUT' && allElements[i].type==="checkbox" ) {
+                allElements[i].checked = targetobj[c[c.length-1]];
+            } else {
+                allElements[i].load(targetobj[c[c.length-1]]);
+            }  
+        }
+    }
+}
+
+function savedata()
+{
+    var s = save();
+    document.getElementById('savetext').value = JSON.stringify(s,null,4);
+
+
+}
+
+function loaddata()
+{
+    load(JSON.parse(document.getElementById('savetext').value));
+}
+
+
+
 loadgui();
 setenvelopfreq(0.5);
+
+var defval = save();
+document.getElementById('savetext').value = JSON.stringify(defval,null,4);
+function reset() {
+    load(defval);
+}

@@ -128,6 +128,11 @@ function frequencyinput(obj,cfg)
 
     this.set(this.freq);
 
+    obj.load = function(v)
+    {
+        this.set(v);
+    }.bind(this);
+
 
 }
 
@@ -238,6 +243,11 @@ function timeinput(obj,cfg)
     }.bind(this);
 
     this.set(this.time);
+
+    obj.load = function(v)
+    {
+        this.set(v);
+    }.bind(this);
 }
 
 function sliderinput(obj,cfg)
@@ -291,6 +301,11 @@ function sliderinput(obj,cfg)
     }.bind(this);
 
     this.set(this.value);
+
+    obj.load = function(v)
+    {
+        this.set(v);
+    }.bind(this);
 }
 
 function shapeinput(obj,cfg)
@@ -306,6 +321,15 @@ function shapeinput(obj,cfg)
     }
     obj.appendChild(this.shape);
 
+    this.set = function(v)
+    {
+        this.shape.value = v;
+        this.obj.value = this.shape.value;
+        if (this.obj.onchange ) {
+            this.obj.onchange(this.obj );
+        }
+    }.bind(this);
+
     this.shape.onchange = function () 
     {
         this.obj.value = this.shape.value;
@@ -316,6 +340,11 @@ function shapeinput(obj,cfg)
     }.bind(this);
 
     this.obj.value = shapes[0];
+
+    obj.load = function(v)
+    {
+        this.set(v);
+    }.bind(this);
 
 }
 
@@ -359,4 +388,5 @@ function loadgui() {
         }
         ShapeInput.control = new shapeinput(ShapeInput[i],cfg);
     }
+
 }
