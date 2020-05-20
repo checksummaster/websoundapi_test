@@ -1,4 +1,34 @@
-context = new(window.AudioContext || window.webkitAudioContext)();
+var osc,context,scope1,scope2,freq
+
+function start()
+{
+    context = new(window.AudioContext || window.webkitAudioContext)();
+    scope1 = new Scope(document.getElementById('scope'), {
+        timediv: 0.5,
+        width: 512,
+        height: 256
+    });
+    scope2 = new Scope(document.getElementById('scope2'), {
+        timediv: 0.01,
+        master: scope1,
+        width: 512,
+        height: 256
+    });
+    
+    freq = new Freq(document.getElementById('freq'), {
+        width: 512,
+        height: 256
+    });
+    
+    osc = createOscillatorExt2(context);
+    
+    var chain = [osc, scope1.scriptNode, freq.analyser, context.destination];
+    var node = chain[0];
+    for (i = 1; i < chain.length; i++) {
+        node.connect(chain[i]);
+        node = chain[i];
+    }
+}
 
 
 
@@ -275,31 +305,7 @@ var Freq = function (canvas, cfg) {
     requestAnimationFrame(this.draw.bind(this));
 }
 
-var scope1 = new Scope(document.getElementById('scope'), {
-    timediv: 0.5,
-    width: 512,
-    height: 256
-});
-var scope2 = new Scope(document.getElementById('scope2'), {
-    timediv: 0.01,
-    master: scope1,
-    width: 512,
-    height: 256
-});
 
-var freq = new Freq(document.getElementById('freq'), {
-    width: 512,
-    height: 256
-});
-
-var osc = createOscillatorExt2(context);
-
-var chain = [osc, scope1.scriptNode, freq.analyser, context.destination];
-var node = chain[0];
-for (i = 1; i < chain.length; i++) {
-    node.connect(chain[i]);
-    node = chain[i];
-}
 
 
 function setfreq(osc, v) {
